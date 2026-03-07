@@ -1,0 +1,276 @@
+@use 'sass:color' as color;
+@use '../lib/vars' as *;
+@use '../lib/mixins' as *;
+
+.footer {
+
+    background-color: $white;
+    grid-row: 3/3;
+    display: flex;
+    justify-content: center;
+
+    padding: 2rem;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    position: relative;
+
+    .information {
+
+        grid-column: 1/2;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+
+        button.buttoninfo {
+            display: flex;
+
+            svg {
+                width: 1rem;
+                fill: rgba($black, 1);
+
+                &:hover {
+                    fill: rgba($black, $hover-opacity);
+                    transition: all 200ms ease-in;
+                }
+            }
+        }
+    }
+
+    .selection_buttons {
+
+        grid-column: 2/3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        button.buttonno {
+            @include button-selection($true);
+            margin-right: 1rem;
+        }
+        button.buttonyes {
+            @include button-selection($false);
+        }
+
+        button.true_selected {
+            @include button-selected($true);
+        }
+        button.false_selected {
+            @include button-selected($false);
+        }
+    }
+
+    .submit {
+        grid-column: 3/3;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+
+        button.buttonsubmit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.buttondisabled {
+                @include button(gray, $white, $hover-opacity);
+                cursor: not-allowed;
+
+                .send_warning {
+                    display: none;
+                    position: absolute;
+                    font-size: .8rem;
+                    bottom: 1rem;
+                    right: 1rem;
+
+                    color: gray;
+
+                }
+
+                &:hover {
+                    .send_warning {
+                        display: block;
+                    }
+                }
+
+            }
+            &.buttonenabled {
+                .send_warning {
+                    display: none;
+                }
+                @include button($false, $white, $hover-opacity);
+
+            }
+            svg {
+                width: 1rem;
+                fill: $white;
+                margin-right: .5rem;
+            }
+        }
+        button.buttondisabled {
+
+        }
+
+    }
+
+}
+
+@media (max-width: 1280px) {
+  .footer {
+      padding: 0 1rem 0 1rem;
+    }
+    .send_warning {
+        width: 130px;
+        bottom: 3.5rem !important;       
+    }
+}
+
+
+@media (max-width: 780px) {
+      .send_warning {
+          width: 130px;
+          bottom: 3rem !important;
+      }
+  }
+
+// Retro theme footer
+.skin-retro .footer {
+    background-color: $retro-bg-primary;
+    border-top: 2px solid $retro-border;
+
+    .information {
+        button.buttoninfo svg {
+            fill: $retro-text;
+
+            &:hover {
+                fill: $retro-accent;
+            }
+        }
+    }
+
+    .selection_buttons {
+        button.buttonno {
+            color: $retro-text;
+            border: 2px solid $retro-border;
+            background-color: transparent;
+
+            &:hover {
+                color: $retro-true;
+                border-color: $retro-true;
+            }
+        }
+        button.buttonyes {
+            color: $retro-text;
+            border: 2px solid $retro-border;
+            background-color: transparent;
+
+            &:hover {
+                color: $retro-false;
+                border-color: $retro-false;
+            }
+        }
+
+        button.true_selected {
+            color: $retro-true;
+            border: 2px solid $retro-true;
+            background-color: rgba($retro-true, .2);
+        }
+        button.false_selected {
+            color: $retro-false;
+            border: 2px solid $retro-false;
+            background-color: rgba($retro-false, .2);
+        }
+    }
+
+    .submit {
+        button.buttonsubmit {
+            &.buttondisabled {
+                background-color: $retro-border;
+                color: $retro-bg-primary;
+            }
+            &.buttonenabled {
+                background-color: $retro-accent;
+                color: $retro-bg-primary;
+
+                &:hover {
+                    background-color: color.adjust($retro-accent, $lightness: -10%);
+                }
+            }
+            svg {
+                fill: $retro-bg-primary;
+            }
+        }
+    }
+}
+
+// Futuristic theme footer
+.skin-futuristic .footer {
+    background-color: $futuristic-bg-secondary;
+    border-top: 2px solid $futuristic-accent;
+
+    .information {
+        button.buttoninfo svg {
+            fill: $futuristic-text;
+
+            &:hover {
+                fill: $futuristic-accent;
+            }
+        }
+    }
+
+    .selection_buttons {
+        button.buttonno {
+            color: $futuristic-text;
+            border: 2px solid $futuristic-accent;
+            background-color: transparent;
+
+            &:hover {
+                color: $futuristic-true;
+                border-color: $futuristic-true;
+            }
+        }
+        button.buttonyes {
+            color: $futuristic-text;
+            border: 2px solid $futuristic-accent;
+            background-color: transparent;
+
+            &:hover {
+                color: $futuristic-false;
+                border-color: $futuristic-false;
+            }
+        }
+
+        button.true_selected {
+            color: $futuristic-true;
+            border: 2px solid $futuristic-true;
+            background-color: rgba($futuristic-true, .15);
+        }
+        button.false_selected {
+            color: $futuristic-false;
+            border: 2px solid $futuristic-false;
+            background-color: rgba($futuristic-false, .15);
+        }
+    }
+
+    .submit {
+        button.buttonsubmit {
+            &.buttondisabled {
+                background-color: $futuristic-button-bg;
+                color: $futuristic-text;
+                border: 2px solid $futuristic-accent;
+            }
+            &.buttonenabled {
+                background-color: $futuristic-accent;
+                color: white;
+                border: 2px solid $futuristic-accent;
+
+                &:hover {
+                    background-color: color.adjust($futuristic-accent, $lightness: -10%);
+                }
+            }
+            svg {
+                fill: white;
+            }
+        }
+    }
+}

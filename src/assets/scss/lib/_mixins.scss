@@ -1,0 +1,52 @@
+@use 'vars' as *;
+
+@mixin button($background-color, $color, $hover-opacity) {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba($background-color, 1);
+    color: $color;
+
+    border: none;
+    padding: .5rem 1rem;
+    border-radius: 1rem;
+
+    &:hover {
+        background-color: rgba($background-color, $hover-opacity);
+        transition: all 200ms ease-in;
+    }
+
+}
+
+@mixin button-selection($color) {
+
+    //background-color: $background-color;
+    color: $black;
+
+    border: .1rem solid $black;
+    padding: .5rem 1rem;
+    border-radius: 1rem;
+
+    &:hover {
+        color: $color;
+        border: .1rem solid $color;
+        transition: all 200ms ease-in;
+    }
+
+}
+
+@mixin button-selected($color) {
+
+    //background-color: $background-color;
+    color: $color;
+
+    border: .1rem solid $color;
+    padding: .5rem 1rem;
+    border-radius: 1rem;
+
+    background-color: rgba($color, .15);
+
+}
+

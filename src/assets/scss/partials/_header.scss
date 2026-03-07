@@ -1,0 +1,126 @@
+@use '../lib/vars' as *;
+
+.header {
+    background-color: $white;
+    grid-row: 1/1;
+    display: flex;
+    justify-content: space-between;
+    //align-items: center;
+    padding: 1rem;
+
+    .notice_data {
+
+        h2 {
+            margin: 0 0 1rem 0;
+        }
+
+    }
+
+    .selection_info {
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: fit-content;
+
+        .counter {
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            border-radius: 50%;
+        }
+
+        .true {
+            display: flex;
+            margin-right: 2rem;
+
+            svg {
+                width: 1.5rem;
+                fill: $true;
+                margin-right: .5rem;
+            }
+
+            .true_news {
+                background-color: $true;
+            }
+        }
+
+        .false {
+            display: flex;
+
+            svg {
+                width: 1.5rem;
+                fill: $false;
+                margin-right: .5rem;
+            }
+
+            .false_news {
+                background-color: $false;
+            }
+        }
+    }
+}
+
+// Retro theme header
+.skin-retro .header {
+    background-color: $retro-bg-primary;
+    color: $retro-text;
+    border-bottom: 2px solid $retro-border;
+
+    .selection_info {
+        .true svg {
+            fill: $retro-true;
+        }
+        .true_news {
+            background-color: $retro-true;
+        }
+        .false svg {
+            fill: $retro-false;
+        }
+        .false_news {
+            background-color: $retro-false;
+        }
+    }
+}
+
+// Futuristic theme header
+.skin-futuristic .header {
+    background-color: $futuristic-bg-secondary;
+    color: $futuristic-text;
+    border-bottom: 2px solid $futuristic-accent;
+
+    .selection_info {
+        .true svg {
+            fill: $futuristic-true;
+        }
+        .true_news {
+            background-color: $futuristic-true;
+        }
+        .false svg {
+            fill: $futuristic-false;
+        }
+        .false_news {
+            background-color: $futuristic-false;
+        }
+    }
+}
+
+
+@media (max-width: 1280px) {
+  .header {
+      padding: 0.45rem;
+      .notice_data {
+          h2 {
+              margin: 0 0 0.25rem 0;
+              font-size: 1rem;
+          }
+          .context {
+            font-size: 0.75rem;
+          }
+
+      }
+    }
+}

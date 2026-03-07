@@ -1,0 +1,126 @@
+@use '../lib/vars' as *;
+
+.full_content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    grid-row: 2/2;
+
+    background-color: $white;
+
+    button {
+        display: flex;
+        margin: 0 1rem;
+
+        svg {
+            width: 1rem;
+            fill: rgba($black, 1);
+
+            &:hover {
+                fill: rgba($black, $hover-opacity);
+            }
+        }
+
+        &.buttondisabled {
+            //desactivado
+/*             cursor: not-allowed;
+            svg {
+                fill: gray;
+            } */
+            //desaparece
+            visibility: hidden;
+        }
+    }
+
+    .content {
+        border: $border-general;
+        display: flex;
+        justify-content: center;
+        height: 90%;
+        border-radius: .5rem;
+        overflow: hidden;
+        padding: .5rem;
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
+    }
+
+    .selected {
+        border: $border-false;
+        background-color: rgba($false, .15);
+    }
+    .discarded {
+        border: $border-true;
+        background-color: rgba($true, .15);
+    }
+
+}
+
+// Retro theme content
+.skin-retro .full_content {
+    background-color: $retro-bg-primary;
+
+    button svg {
+        fill: $retro-text;
+
+        &:hover {
+            fill: $retro-accent;
+        }
+    }
+
+    .content {
+        border: 2px solid $retro-border;
+        background-color: $retro-bg-secondary;
+    }
+
+    .selected {
+        border: 2px solid $retro-false;
+        background-color: rgba($retro-false, .2);
+    }
+    .discarded {
+        border: 2px solid $retro-true;
+        background-color: rgba($retro-true, .2);
+    }
+}
+
+// Futuristic theme content
+.skin-futuristic .full_content {
+    background-color: $futuristic-bg-secondary;
+
+    button svg {
+        fill: $futuristic-text;
+
+        &:hover {
+            fill: $futuristic-accent;
+        }
+    }
+
+    .content {
+        border: 2px solid $futuristic-accent;
+        background-color: $futuristic-bg-primary;
+    }
+
+    .selected {
+        border: 2px solid $futuristic-false;
+        background-color: rgba($futuristic-false, .15);
+    }
+    .discarded {
+        border: 2px solid $futuristic-true;
+        background-color: rgba($futuristic-true, .15);
+    }
+}
+
+
+
+@media (max-width: 1280px) {
+  .full_content {
+    .content {
+      height: 95%;
+      padding: 0.15rem;
+    }
+  }
+}
+/* {} */

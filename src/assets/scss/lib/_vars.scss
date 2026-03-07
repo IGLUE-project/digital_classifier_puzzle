@@ -1,0 +1,35 @@
+$font-base: 16px;
+
+$font-family-base: 'Karla', 'Helvetica', 'Arial', sans-serif;
+
+$true: #2aaf35;
+$false: #c41e1e;
+
+$black: #111111;
+$white: #f2f2f2;
+
+$hover-opacity: .8;
+$border-general: .15rem solid white;
+$border-true: .15rem solid $true;
+$border-false: .15rem solid $false;
+
+// Retro theme colors
+$retro-bg-primary: #d4c4a8;
+$retro-bg-secondary: #c8b897;
+$retro-text: #3d2e1c;
+$retro-accent: #8b4513;
+$retro-border: #6b4423;
+$retro-button-bg: #a67c52;
+$retro-true: #4a7c3a;
+$retro-false: #8b3a3a;
+
+// Futuristic theme colors
+$futuristic-bg-primary: #e8f4f8;
+$futuristic-bg-secondary: #d0e8f0;
+$futuristic-text: #1a3a4a;
+$futuristic-accent: #00b4d8;
+$futuristic-accent-secondary: #7b2cbf;
+$futuristic-border: #00b4d8;
+$futuristic-button-bg: #90e0ef;
+$futuristic-true: #00c896;
+$futuristic-false: #e63946;

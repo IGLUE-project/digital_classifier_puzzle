@@ -1,0 +1,282 @@
+@use 'sass:color' as color;
+@use '../lib/vars' as *;
+@use '../lib/mixins' as *;
+
+.modal_content {
+  background-color: #fafafa;
+  width: 50%;
+  border-radius: .5rem;
+  padding: 1.5rem;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .modal_info {
+    margin-bottom: 1rem;
+  }
+
+  .outerfeedback {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+  }
+
+  .rowfeedback {
+    display: flex;
+    flex: 1;
+  }
+
+  .itemfeedback {
+    display: flex;
+    flex: 1;
+    align-content: flex-start;
+    column-gap: 10px;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .wrongfeedback {
+    border: 0.15rem solid #c41e1e;
+    background-color: rgba(196, 30, 30, 0.15);
+  }
+
+  .correctfeedback {
+    border: 0.15rem solid #1ec41e;
+    background-color: rgba(30, 196, 30, 0.15);
+  }
+
+  .imgfeedback {
+    flex: 1;
+    max-width: 30%;
+  }
+
+  .textfeedback {
+    flex: 3;
+  }
+
+  .instructions {
+
+    margin-bottom: 2rem;
+
+    .step_one {
+
+      display: flex;
+      justify-content: space-between;
+
+      p {
+        width: 50%;
+      }
+
+      .buttons_selections {
+
+        .buttonno {
+
+          @include button-selected($true);
+          margin-bottom: .5rem;
+
+        }
+        .buttonyes {
+
+          @include button-selected($false);
+          margin-left: .5rem;
+
+        }
+      }
+    }
+
+    .step_two {
+
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+
+      p {
+        width: 50%;
+      }
+
+      .button_submit {
+
+        button.buttonsubmit {
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          @include button($false, $white, 1);
+
+          svg {
+              width: 1rem;
+              fill: $white;
+              margin-right: .5rem;
+          }
+        }
+      }
+    }
+  }
+
+  .continue {
+    display: flex;
+    justify-content: space-around;
+
+    button {
+      @include button($black, $white, $hover-opacity);
+    }
+
+  }
+
+  .close_modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+
+    display: flex;
+    align-items: center;
+
+    .close_modal_icon {
+      cursor: pointer;
+      width: .75rem;
+    }
+
+  }
+}
+
+
+
+@media (max-width: 1280px) {
+      .modal_content {
+        width: 85%;
+        max-height: 85vh;
+        overflow: auto;
+        padding: 1rem;
+        h2 {
+            font-size: 1.4em;
+        }
+        .instructions {
+          margin-bottom: 0rem;
+          h4 {
+            margin-block-end: 0.5em;
+          }
+          .step_two {
+            margin-top: 0rem;
+          }
+        }
+
+
+      }
+}
+
+// Retro theme modal
+.skin-retro .modal_content {
+    background-color: $retro-bg-primary;
+    color: $retro-text;
+    border: 3px solid $retro-border;
+
+    .wrongfeedback {
+        border-color: $retro-false;
+        background-color: rgba($retro-false, 0.15);
+    }
+
+    .correctfeedback {
+        border-color: $retro-true;
+        background-color: rgba($retro-true, 0.15);
+    }
+
+    .instructions {
+        .step_one {
+            .buttons_selections {
+                .buttonno {
+                    color: $retro-true;
+                    border: 2px solid $retro-true;
+                    background-color: rgba($retro-true, .2);
+                }
+                .buttonyes {
+                    color: $retro-false;
+                    border: 2px solid $retro-false;
+                    background-color: rgba($retro-false, .2);
+                }
+            }
+        }
+        .step_two {
+            .button_submit button.buttonsubmit {
+                background-color: $retro-accent;
+                color: $retro-bg-primary;
+
+                svg {
+                    fill: $retro-bg-primary;
+                }
+            }
+        }
+    }
+
+    .continue button {
+        background-color: $retro-accent;
+        color: $retro-bg-primary;
+
+        &:hover {
+            background-color: color.adjust($retro-accent, $lightness: -10%);
+        }
+    }
+
+    .close_modal .close_modal_icon {
+        fill: $retro-text;
+    }
+}
+
+// Futuristic theme modal
+.skin-futuristic .modal_content {
+    background-color: $futuristic-bg-primary;
+    color: $futuristic-text;
+    border: 2px solid $futuristic-accent;
+
+    .wrongfeedback {
+        border-color: $futuristic-false;
+        background-color: rgba($futuristic-false, 0.15);
+    }
+
+    .correctfeedback {
+        border-color: $futuristic-true;
+        background-color: rgba($futuristic-true, 0.15);
+    }
+
+    .instructions {
+        .step_one {
+            .buttons_selections {
+                .buttonno {
+                    color: $futuristic-true;
+                    border: 2px solid $futuristic-true;
+                    background-color: rgba($futuristic-true, .15);
+                }
+                .buttonyes {
+                    color: $futuristic-false;
+                    border: 2px solid $futuristic-false;
+                    background-color: rgba($futuristic-false, .15);
+                }
+            }
+        }
+        .step_two {
+            .button_submit button.buttonsubmit {
+                background-color: $futuristic-accent;
+                color: white;
+
+                svg {
+                    fill: white;
+                }
+            }
+        }
+    }
+
+    .continue button {
+        background-color: $futuristic-accent;
+        color: white;
+
+        &:hover {
+            background-color: color.adjust($futuristic-accent, $lightness: -10%);
+        }
+    }
+
+    .close_modal .close_modal_icon {
+        fill: $futuristic-text;
+    }
+}

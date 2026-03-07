@@ -6,6 +6,11 @@ html, body, div#root, div#global_wrapper, div.screen_wrapper, div.screen_content
   padding: 0;
   border: none;
 }
+div#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 html, body {
   background: transparent;

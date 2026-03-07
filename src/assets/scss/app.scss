@@ -1,13 +1,89 @@
-div.screen_wrapper {
-  position: absolute;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 2.1s ease, visibility ease 2.1s;
+@use 'lib/vars' as *;
+@use 'lib/mixins' as *;
+
+@use 'partials/header';
+@use 'partials/content';
+@use 'partials/footer';
+@use 'partials/modal';
+
+html, body {
+  margin:0;
+  padding: 0;
+
+  font-family: $font-family-base;
+  font-size: $font-base;
+  //overflow:hidden;
 }
 
-div.screen_wrapper.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+html {
+  background-color: #c8b197;
+  background-size: contain, cover;
+}
+
+html.skin-standard {
+  background:
+    url("/images/tablet.png") center no-repeat,
+    url("/images/background.png") center center no-repeat;
+  background-color: #c8b197;
+  background-size: contain, cover;
+}
+
+html.skin-retro {
+  background:
+    url("/images/tablet_retro.png") center no-repeat,
+    url("/images/background_retro.png") center center no-repeat;
+  background-color: #c8b197;
+  background-size: contain, cover;
+}
+
+html.skin-futuristic {
+  background:
+    url("/images/tablet_futuristic.png") center no-repeat,
+    url("/images/background_futuristic.png") center center no-repeat;
+  background-color: #caf0f8;
+  background-size: contain, cover;
+}
+
+.App {
+    overflow: scroll;
+    width: 100vmin;
+    border-radius: 0.25rem;
+    display: grid;
+    justify-content: stretch;
+    align-content: stretch;
+    grid-template-rows: 15% 70% 15%;
+    height: 80vmin;
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 4 / 3;
+    margin:auto;
+}
+.full_content{
+  flex: 1;
+  overflow: auto;
+}
+p {
+  margin: 0;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+
+@media (max-width: 1280px) {
+  .App {
+      grid-template-rows: 12% 78% 10%;
+    }
+}
+
+
+.buttonleft svg, .buttonright svg{
+  width: 2rem !important;
+}
+
+.content {
+  background-color: white  !important;
 }

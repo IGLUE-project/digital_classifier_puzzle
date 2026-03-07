@@ -2,10 +2,11 @@ import React from 'react';
 import {useState, useEffect, useRef, useContext } from 'react';
 import { GlobalContext } from "./GlobalContext";
 import './../assets/scss/app.scss';
-
-import { DEFAULT_APP_SETTINGS, SKIN_SETTINGS_RETRO, SKIN_SETTINGS_RETRO_JUNGLE, SKIN_SETTINGS_RETRO_REALISTIC, SKIN_SETTINGS_FUTURISTIC, ESCAPP_CLIENT_SETTINGS, MAIN_SCREEN, MESSAGE_SCREEN } from '../constants/constants.jsx';
+import ModalStart from "./ModalStart.jsx";
+import ModalEnd from "./ModalEnd.jsx";
 import MainScreen from './MainScreen.jsx';
-import MessageScreen from './MessageScreen.jsx';
+import { DEFAULT_APP_SETTINGS, ESCAPP_CLIENT_SETTINGS, MAIN_SCREEN, MESSAGE_SCREEN } from '../constants/constants.jsx';
+
 
 export default function App() {
   const { escapp, setEscapp, appSettings, setAppSettings, Storage, setStorage, Utils, I18n } = useContext(GlobalContext);
@@ -16,6 +17,11 @@ export default function App() {
   const solution = useRef(null);
   const [appWidth, setAppWidth] = useState(0);
   const [appHeight, setAppHeight] = useState(0);
+  let [showModalStart, setShowModalStart] = useState(true);
+  let [showModalEnd, setShowModalEnd] = useState(false);
+  let [news, setNews] = useState([]);
+  let [newsIndex, setNewsIndex] = useState(0);
+  let [passed, setPassed] = useState(false);
   
   useEffect(() => {
     //Init Escapp client
@@ -49,58 +55,10 @@ export default function App() {
       _appSettings.skin = DEFAULT_APP_SETTINGS.skin;
     }
 
-    let skinSettings;
-    switch(_appSettings.skin){
-      case "RETRO":
-        skinSettings = SKIN_SETTINGS_RETRO;
-        break;
-      case "RETRO_JUNGLE":
-        skinSettings = SKIN_SETTINGS_RETRO_JUNGLE;
-        break;
-      case "RETRO_REALISTIC":
-        skinSettings = SKIN_SETTINGS_RETRO_REALISTIC;
-        break;
-      case "FUTURISTIC":
-        skinSettings = SKIN_SETTINGS_FUTURISTIC;
-        break;
-      default:
-        skinSettings = {};
-    }
-    let DEFAULT_APP_SETTINGS_SKIN = Utils.deepMerge(DEFAULT_APP_SETTINGS, skinSettings);
- 
-     // Merge _appSettings with DEFAULT_APP_SETTINGS_SKIN to obtain final app settings
-    _appSettings = Utils.deepMerge(DEFAULT_APP_SETTINGS_SKIN, _appSettings);
-    
-    const allowedActions = ["NONE", "SHOW_MESSAGE"];
-    if(!allowedActions.includes(_appSettings.actionAfterSolve)) {
-      _appSettings.actionAfterSolve = DEFAULT_APP_SETTINGS.actionAfterSolve;
-    }
-
-    switch(_appSettings.keysType){
-      case "LETTERS":
-        _appSettings.keys = _appSettings.letters;
-        _appSettings.backgroundKeys = new Array(12).fill(_appSettings.backgroundKey);
-        break;
-      case "COLORS":
-        _appSettings.keys = _appSettings.colors;
-        _appSettings.backgroundKeys = _appSettings.coloredBackgroundKeys;
-        break;
-      case "SYMBOLS":
-        _appSettings.keys = _appSettings.symbols;
-        if((_appSettings.skin === "FUTURISTIC")&&(_appSettings.backgroundKey === "images/background_key_futuristic.png")){
-          _appSettings.backgroundKey = "images/background_key_futuristic_black.png";
-        }
-        _appSettings.backgroundKeys = new Array(12).fill(_appSettings.backgroundKey);
-        break;
-      default:
-        //NUMBERS
-        _appSettings.keys = _appSettings.numbers;
-        _appSettings.backgroundKeys = new Array(12).fill(_appSettings.backgroundKey);
-    }
 
     //Init internacionalization module
     I18n.init(_appSettings);
-
+    setNews(JSON.parse(_appSettings.items || "[]"));
     if(typeof _appSettings.message !== "string"){
       _appSettings.message = I18n.getTrans("i.message");
     }
@@ -163,6 +121,53 @@ export default function App() {
   }, [loading]);
 
   useEffect(() => {
+    if(appSettings !== null && appSettings.skin){
+      const skinClass = getSkinClass(appSettings.skin);
+      document.documentElement.classList.remove('skin-standard', 'skin-retro', 'skin-futuristic');
+      document.documentElement.classList.add(skinClass);
+
+      // Set background based on appSettings.background
+      applyBackground(appSettings.background, skinClass);
+    }
+  }, [appSettings]);
+
+  function getSkinClass(skin){
+    const skinLower = skin.toLowerCase();
+    if(skinLower.includes('futuristic')){
+      return 'skin-futuristic';
+    } else if(skinLower.includes('retro')){
+      return 'skin-retro';
+    }
+    return 'skin-standard';
+  }
+
+  function applyBackground(background, skinClass){
+    const html = document.documentElement;
+
+    // Check if background is empty or "NONE" - use skin default
+    if(!background || background === "" || background.toUpperCase() === "NONE"){
+      // Remove inline style to let CSS handle it based on skin class
+      html.style.background = "";
+      html.style.backgroundSize = "";
+      html.style.backgroundColor = "";
+    } else {
+      // Use custom background from appSettings, preserving tablet overlay
+      // Use import.meta.env.BASE_URL for correct path resolution in production
+      const baseUrl = import.meta.env.BASE_URL || './';
+      const bgColor = skinClass === 'skin-futuristic' ? '#caf0f8' : '#c8b197';
+      let tabletImage = `${baseUrl}images/tablet.png`;
+      if(skinClass === 'skin-futuristic'){
+        tabletImage = `${baseUrl}images/tablet_futuristic.png`;
+      } else if(skinClass === 'skin-retro'){
+        tabletImage = `${baseUrl}images/tablet_retro.png`;
+      }
+      html.style.background = `url("${tabletImage}") center no-repeat, url("${background}") center center no-repeat`;
+      html.style.backgroundColor = bgColor;
+      html.style.backgroundSize = "contain, cover";
+    }
+  }
+
+  useEffect(() => {
     if (screen !== prevScreen.current) {
       Utils.log("Screen ha cambiado de", prevScreen.current, "a", screen);
       prevScreen.current = screen;
@@ -179,9 +184,9 @@ export default function App() {
     Utils.log("Restore application state based on escape room state:", erState);
     if (escapp.getAllPuzzlesSolved() && (escapp.getSolvedPuzzles().length > 0)){
       //Puzzle already solved
-      if((appSettings.actionAfterSolve === "SHOW_MESSAGE")&&(screen !== MESSAGE_SCREEN)){
-        setScreen(MESSAGE_SCREEN);
-      }
+        setShowModalStart(false);
+        setPassed(true);
+        setShowModalEnd(true);
     } else {
       //Puzzle not solved. Restore app state based on local storage.
       restoreAppStateFromLocalStorage();
@@ -212,65 +217,79 @@ export default function App() {
     }
   }
 
-  function onKeypadSolved(_solution){
-    Utils.log("onKeypadSolved with solution:", _solution);
-    if(typeof _solution !== "string"){
-      return;
-    }
-    solution.current = _solution;
-
-    switch(appSettings.actionAfterSolve){
-      case "SHOW_MESSAGE":
-        return setScreen(MESSAGE_SCREEN);
-      case "NONE":
-      default:
-        return submitPuzzleSolution();
+  const left = () => {
+    if(newsIndex > 0){
+      setNewsIndex(newsIndex - 1);
     }
   }
 
-  function submitPuzzleSolution(){
-    Utils.log("Submit puzzle solution", solution.current);
+  const right = () => {
+    if(newsIndex < news.length - 1){
+      setNewsIndex(newsIndex + 1);
+    }
+  }
 
-    escapp.submitNextPuzzle(solution.current, {}, (success, erState) => {
-      if(!success){
-        setScreen(MAIN_SCREEN);
+  const isfalse = () => {
+    if(!passed){
+      let mynews = JSON.parse(JSON.stringify(news));
+      mynews[newsIndex].answer = false;
+      setNews(mynews);
+    }
+  }
+
+  const istrue = () => {
+    if(!passed){
+      let mynews = JSON.parse(JSON.stringify(news));
+      mynews[newsIndex].answer = true;
+      setNews(mynews);
+    }
+  }
+  const submit = () => {
+    let solution = "";
+    news.map(n => {
+      if(n.answer===true){
+        solution += "1";
+      } else if (n.answer===false){
+        solution += "0";
       }
-      Utils.log("Solution submitted to Escapp", solution.current, success, erState);
+    });
+    console.log("SOLUTION: " + solution);
+    escapp.submitNextPuzzle(solution, {}, function(success, erState){
+      if(success){
+        setPassed(true);
+        setShowModalEnd(true);
+      } else {
+        setPassed(false);
+        setShowModalEnd(true);
+      }
     });
   }
 
-  const renderScreens = (screens) => {
-    if (loading === true) {
-      return null;
-    } else {
-      return (
-        <>
-          {screens.map(({ id, content }) => renderScreen(id, content))}
-        </>
-      );
-    }
-  };
+  const openModalStart = () => {
+    setShowModalStart(true);
+  }
 
-  const renderScreen = (screenId, screenContent) => (
-    <div key={screenId} className={`screen_wrapper ${screen === screenId ? 'active' : ''}`} >
-      {screenContent}
-    </div>
-  );
+  const openModalEnd = () => {
+    setShowModalEnd(true);
+  }
 
-  let screens = [
-    {
-      id: MAIN_SCREEN,
-      content: <MainScreen appHeight={appHeight} appWidth={appWidth} onKeypadSolved={onKeypadSolved} />
-    },
-    {
-      id: MESSAGE_SCREEN,
-      content: <MessageScreen appHeight={appHeight} appWidth={appWidth} submitPuzzleSolution={submitPuzzleSolution} />
-    }
-  ];
+  const closeModalStart = () => {
+    setShowModalStart(false);
+  }
 
-  return (
-    <div id="global_wrapper" className={`${(appSettings !== null && typeof appSettings.skin === "string") ? appSettings.skin.toLowerCase() : ''}`}>
-      {renderScreens(screens)}
-    </div>
-  )
+  const closeModalEnd = () => {
+    setShowModalEnd(false);
+  }
+
+
+
+  if(loading){
+    return <div>LOADING</div> ;
+  } else {
+    return <>
+      <ModalStart showModal={showModalStart} closeModal={closeModalStart} I18n={I18n}/>
+      <ModalEnd showModal={showModalEnd} closeModal={closeModalEnd} I18n={I18n} passed={passed} news={news}/>
+      <MainScreen passed={passed} news={news} newsIndex={newsIndex} openModalStart={openModalStart} openModalEnd={openModalEnd} left={left} right={right} isfalse={isfalse} istrue={istrue} submit={submit} I18n={I18n}/>
+    </>;
+  }
 }

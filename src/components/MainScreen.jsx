@@ -1,197 +1,115 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
+import { useState } from "react";
 import { GlobalContext } from "./GlobalContext";
-import './../assets/scss/main.scss';
 
-import BoxButton from './BoxButton.jsx';
 
-const MainScreen = (props) => {
-  const { escapp, appSettings, Utils, I18n } = useContext(GlobalContext);
-  const [currentSolution, setCurrentSolution] = useState([]);
-  const [processingSolution, setProcessingSolution] = useState(false);
-  const [light, setLight] = useState("off");
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [containerHeight, setContainerHeight] = useState(0);
-  const [containerMarginTop, setContainerMarginTop] = useState(0);
-  const [containerMarginLeft, setContainerMarginLeft] = useState(0);
-  const [boxWidth, setBoxWidth] = useState(0);
-  const [boxHeight, setBoxHeight] = useState(0);
-  const [lightWidth, setLightWidth] = useState(0);
-  const [lightHeight, setLightHeight] = useState(0);
-  const [lightLeft, setLightLeft] = useState(0);
-  const [lightTop, setLightTop] = useState(0);
+export default function MainScreen(props) {
+    const { appSettings, I18n } = useContext(GlobalContext);
 
-  useEffect(() => {
-    handleResize();
-  }, [props.appWidth, props.appHeight]);
+    const [touchStart, setTouchStart] = useState(0);
+    const [touchEnd, setTouchEnd] = useState(0);
 
-  function handleResize(){
-    if((props.appHeight === 0)||(props.appWidth === 0)){
-      return;
+    const handleTouchStart = (e) => {
+        setTouchStart(e.targetTouches[0].clientX);
     }
 
-    let aspectRatio = 4 / 3;
-    let _keypadWidth = Math.min(props.appHeight * aspectRatio, props.appWidth);
-    let _keypadHeight = _keypadWidth / aspectRatio;
-
-    let _containerWidth = _keypadWidth * 0.22;
-    let _containerHeight = _keypadHeight * 0.4;
-    let _containerMarginLeft;
-    let _containerMarginTop;
-
-    let _boxWidth = _keypadWidth * 0.06;
-    let _boxHeight = _keypadHeight * 0.1;
-
-    let _lightWidth;
-    let _lightHeight;
-    let _lightLeft;
-    let _lightTop;
-
-    switch(appSettings.skin){
-      case "RETRO":
-      case "RETRO_JUNGLE":
-      case "RETRO_REALISTIC":
-        _containerMarginTop = _keypadHeight * 0.12;
-        _containerMarginLeft = 0;
-        _lightWidth = _keypadWidth * 0.08;
-        _lightHeight = _keypadHeight * 0.11;
-        _lightLeft = props.appWidth / 2 - _keypadWidth * 0.041;
-        _lightTop = props.appHeight / 2 - _keypadHeight * 0.265;
-        break;
-      case "FUTURISTIC":
-        _containerMarginTop = 0;
-        _containerMarginLeft = _keypadWidth * -0.065;
-        _lightWidth = _keypadWidth * 0.045;
-        _lightHeight = _keypadHeight * 0.48;
-        _lightLeft = props.appWidth / 2 + _keypadWidth / 2 * 0.27;
-        _lightTop = props.appHeight / 2 - _keypadHeight / 2 * 0.48;
-        break;
-      default:
-        //Standard skin
-        _containerMarginTop = 0;
-        _containerMarginLeft = _keypadWidth * 0.045;
-        _lightWidth = _keypadWidth * 0.05;
-        _lightHeight = _keypadHeight * 0.5;
-        _lightLeft = props.appWidth / 2 + _keypadWidth / 2 * 0.35;
-        _lightTop = props.appHeight / 2 - _keypadHeight / 2 * 0.8;
+    const handleTouchMove = (e) => {
+        setTouchEnd(e.targetTouches[0].clientX);
     }
 
-    setContainerWidth(_containerWidth);
-    setContainerHeight(_containerHeight);
-    setContainerMarginTop(_containerMarginTop);
-    setContainerMarginLeft(_containerMarginLeft);
-
-    setBoxWidth(_boxWidth);
-    setBoxHeight(_boxHeight);
-
-    setLightWidth(_lightWidth);
-    setLightHeight(_lightHeight);
-    setLightLeft(_lightLeft);
-    setLightTop(_lightTop);
-  }
-
-  const onClickButton = (value) => {
-    if (processingSolution) {
-      return;
+    const handleTouchEnd = (e) => {
+        if (touchStart - touchEnd > 150) {
+            props.right();
+        }
+        if (touchStart - touchEnd < -150) {
+            props.left();
+        }
     }
-    Utils.log("onClickButton", value);
-    setProcessingSolution(true);
 
-    const shortBeep = document.getElementById("audio_beep");
-    shortBeep.pause();
-    shortBeep.currentTime = 0;
-    shortBeep.play();
+    let selectedClassname = "";
+    let trueSelected= "";
+    let falseSelected= "";
+    let item = props.news[props.newsIndex];
+    let numberselected = props.news.filter(item => item.answer === true).length;
+    let numberdiscarded = props.news.filter(item => item.answer === false).length;
+    let buttonsubmitdisabled = numberdiscarded + numberselected < props.news.length;
+    let buttonleftdisabled = props.newsIndex === 0;
+    let buttonrightdisabled = props.newsIndex === props.news.length - 1;
 
-    setTimeout(() => {
-      currentSolution.push(value);
-      if (currentSolution.length < appSettings.solutionLength) {
-        setCurrentSolution(currentSolution);
-        setProcessingSolution(false);
+    if(props.passed){
+      numberselected = props.news.filter(item => item.true_or_false === true).length;
+      numberdiscarded = props.news.filter(item => item.true_or_false === false).length;
+    }
+
+    if(/*(props.passed && item.true_or_false===false) || */(item.answer !== undefined && item.answer === false)){
+      selectedClassname = "selected";
+      falseSelected = "false_selected";
+    } else if(/*(props.passed && item.true_or_false===true) || */ item.answer !== undefined && item.answer === true){
+      selectedClassname = "discarded";
+      trueSelected = "true_selected";;
+    }
+
+    const submitClick = () => {
+      if(buttonsubmitdisabled){
+        return;
       } else {
-        const solution = currentSolution.join(";");
-        setCurrentSolution([]);
-        Utils.log("Check solution", solution);
-        escapp.checkNextPuzzle(solution, {}, (success, erState) => {
-          Utils.log("Check solution Escapp response", success, erState);
-          try {
-            setTimeout(() => {
-              changeBoxLight(success, solution);
-            }, 700);
-          } catch(e){
-            Utils.log("Error in checkNextPuzzle",e);
-          }
-        });
+        props.submit();
       }
-    }, 300);
-  }
-
-  const changeBoxLight = (success, solution) => {
-    let audio;
-    let afterChangeBoxLightDelay = 1000;
-    let isRetro = appSettings.skin.includes("RETRO");
-
-    if (success) {
-      audio = document.getElementById("audio_success");
-      setLight("ok");
-      afterChangeBoxLightDelay = ((isRetro===true) ? 4500 : 1500);
-    } else {
-      audio = document.getElementById("audio_failure");
-      setLight("nok");
     }
 
-    setTimeout(() => {
-      if((success===false)||(isRetro === false)){
-        setLight("off");
-        setProcessingSolution(false);
-      }
-      if (success) {
-        props.onKeypadSolved(solution);
-      }
-    }, afterChangeBoxLightDelay);
-
-    audio.play();
-  }
-
-  let backgroundImage = 'url("' + appSettings.backgroundKeypad + '")';
-  if(appSettings.background && appSettings.background !== "NONE"){
-    backgroundImage += ', url("' + appSettings.background + '")';
-  }
-
-  let boxLightTransitionClass = (light === "ok" && appSettings.skin.includes("RETRO")) ? "slowTransition" : "";
-
-  return (
-    <div id="screen_main" className={"screen_content"} style={{ backgroundImage: backgroundImage }}>
-      <div id="keypad" style={{ width: containerWidth, height: containerHeight, marginTop: containerMarginTop, marginLeft: containerMarginLeft }}>
-        <audio id="audio_beep" src={appSettings.soundBeep} autostart="false" preload="auto" />
-        <audio id="audio_failure" src={appSettings.soundNok} autostart="false" preload="auto" />
-        <audio id="audio_success" src={appSettings.soundOk} autostart="false" preload="auto" />
-        <div id="row1" className="row">
-          <BoxButton value={appSettings.keys[0]} position={1} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-          <BoxButton value={appSettings.keys[1]} position={2} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-          <BoxButton value={appSettings.keys[2]} position={3} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
+    return (
+      <div className="App">
+        <div className="full_content" onTouchStart={touchStartEvent => handleTouchStart(touchStartEvent)} onTouchMove={touchMoveEvent => handleTouchMove(touchMoveEvent)} onTouchEnd={() => handleTouchEnd()}>
+          <button className={"buttonleft " + (buttonleftdisabled ? "buttondisabled":"buttonenabled")} onClick={()=>props.left()}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M20 0H0v20h20zm-7.354 14.166-1.389 1.439-5.737-5.529 5.729-5.657 1.4 1.424-4.267 4.215z"/></svg>
+					</button>
+          <div className={'content ' + selectedClassname } style={{flex: 1}} >
+              {item.iframe ? <iframe id="fakeiframe" src={item.path} style={{flex: 1}}/>:<img src={item.path} alt=""/>}
+          </div>
+          <button className={"buttonright " + (buttonrightdisabled ? "buttondisabled":"buttonenabled")} onClick={()=>props.right()}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M20 0H0v20h20zM7.658 15.707l-1.414-1.414L10.537 10 6.244 5.707l1.414-1.414L13.365 10z"/></svg>
+					</button>
         </div>
-        <div id="row2" className="row">
-          <BoxButton value={appSettings.keys[3]} position={4} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-          <BoxButton value={appSettings.keys[4]} position={5} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-          <BoxButton value={appSettings.keys[5]} position={6} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
+
+        <div className='footer'>
+          <div className="information">
+            <button className="buttoninfo" onClick={()=>props.openModalStart()}>
+              <svg viewBox="0 0 22 22">
+                <path fillRule="evenodd" d="M11 0C4.925 0 0 4.925 0 11s4.925 11 11 11 11-4.925 11-11S17.075 0 11 0zm-.5 5a1 1 0 000 2h.5a1 1 0 100-2h-.5zM9 9a1 1 0 000 2h1v3H9a1 1 0 100 2h4a1 1 0 000-2h-1v-4a1 1 0 00-1-1H9z" clipRule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+
+          <div className="selection_buttons">
+            <button className={'buttonno ' + trueSelected } onClick={()=>props.istrue()}>
+            {appSettings.button_ok}
+            </button>
+            <button className={'buttonyes ' + falseSelected } onClick={()=>props.isfalse()}>
+            {appSettings.button_nok}
+            </button>
+          </div>
+
+          <div className="submit">
+            {!props.passed ?
+            <button className={"buttonsubmit " + (buttonsubmitdisabled ? "buttondisabled":"buttonenabled")}  onClick={submitClick}>
+              <p className="send_warning">{appSettings.send_disabled}</p>
+              <svg viewBox="0 0 25 23">
+                <path d="M20.214 12.041l-1.212 1.213 2.213 2.216h-7a3.429 3.429 0 100 6.857h1.714v-1.714h-1.715a1.714 1.714 0 110-3.429h7l-2.213 2.218 1.213 1.21 4.286-4.285-4.286-4.286z"/>
+                <path d="M7.357 15.47H2.214L2.212 2.532l9.8 6.786a.857.857 0 00.976 0l9.798-6.782v7.791H24.5V1.756A1.716 1.716 0 0022.786.042H2.214A1.714 1.714 0 00.5 1.753V15.47a1.717 1.717 0 001.714 1.714h5.143V15.47zM20.9 1.756L12.5 7.57 4.1 1.756h16.8z"/>
+              </svg>
+              {appSettings.sendText}
+            </button>:
+            <button className="buttonsubmit buttonenabled"  onClick={props.openModalEnd}>
+              <svg viewBox="0 0 25 23">
+                <path d="M20.214 12.041l-1.212 1.213 2.213 2.216h-7a3.429 3.429 0 100 6.857h1.714v-1.714h-1.715a1.714 1.714 0 110-3.429h7l-2.213 2.218 1.213 1.21 4.286-4.285-4.286-4.286z"/>
+                <path d="M7.357 15.47H2.214L2.212 2.532l9.8 6.786a.857.857 0 00.976 0l9.798-6.782v7.791H24.5V1.756A1.716 1.716 0 0022.786.042H2.214A1.714 1.714 0 00.5 1.753V15.47a1.717 1.717 0 001.714 1.714h5.143V15.47zM20.9 1.756L12.5 7.57 4.1 1.756h16.8z"/>
+              </svg>
+              {appSettings.end}
+            </button>
+            }
+          </div>
+
         </div>
-        <div id="row3" className="row">
-          <BoxButton value={appSettings.keys[6]} position={7} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-          <BoxButton value={appSettings.keys[7]} position={8} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-          <BoxButton value={appSettings.keys[8]} position={9} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-        </div>
-        <div id="row4" className="row">
-          <BoxButton value={appSettings.keys[9]} position={10} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-          <BoxButton value={appSettings.keys[10]} position={11} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-          <BoxButton value={appSettings.keys[11]} position={12} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-        </div>
-        <div className={`boxLight boxLight_off ${boxLightTransitionClass}`} style={{ visibility: light === "off" ? "visible" : "hidden", opacity: light === "off" ? "1" : "0", width: lightWidth, height: lightHeight, backgroundImage: 'url("' + appSettings.imageLightOff + '")', left: lightLeft, top: lightTop }} ></div> 
-        <div className={`boxLight boxLight_nok ${boxLightTransitionClass}`} style={{ visibility: light === "nok" ? "visible" : "hidden", opacity: light === "nok" ? "1" : "0", width: lightWidth, height: lightHeight, backgroundImage: 'url("' + appSettings.imageLightNok + '")', left: lightLeft, top: lightTop }} ></div> 
-        <div className={`boxLight boxLight_ok ${boxLightTransitionClass}`} style={{ visibility: light === "ok" ? "visible" : "hidden", opacity: light === "ok" ? "1" : "0", width: lightWidth, height: lightHeight, backgroundImage: 'url("' + appSettings.imageLightOk + '")', left: lightLeft, top: lightTop }} ></div> 
       </div>
-    </div>);
-};
-
-export default MainScreen;
-
-
-
+    );
+  }

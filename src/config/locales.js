@@ -1,14 +1,20 @@
 export let LOCALES = {
   en:{
-    "i.message": "You've opened the door! \n Click 'Continue' to advance to the next puzzle.",
-    "i.continue":"Continue",
+    "i.continue": "Continue",
+    "i.close": "Close",
+    "i.congrats": "",
+    "i.congrats2": ""
   },
   es:{
-    "i.message": "¡Has abierto la puerta! \n Pulsa 'Continuar' para avanzar al siguiente reto.",
-    "i.continue":"Continuar",
+    "i.continue": "Continuar",
+    "i.close": "Cerrar",
+    "i.congrats": "",
+    "i.congrats2": ""
   },
   sr:{
-    "i.message": "You've opened the door! \n Click 'Continue' to advance to the next puzzle.",
-    "i.continue":"Continue",
+    "i.continue": "Continue",
+    "i.close": "Close",
+    "i.congrats": "",
+    "i.congrats2": ""
   },
 };

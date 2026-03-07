@@ -1,12 +1,12 @@
 {
-  "name": "EscappKeypadPuzzle",
+  "name": "IpadClassifier",
   "version": "1.0.0",
   "description": "A web app for creating escape room puzzles for the Escapp platform",
   "author": "GING UPM",
   "license": "GNU General Public License v3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iglue-project/keypad_puzzle"
+    "url": "https://github.com/iglue-project/ipad_puzzle"
   },
   "type": "module",
   "scripts": {
@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-modal": "^3.14.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
@@ -35,7 +36,7 @@
     "fs-extra": "^11.3.0",
     "globals": "^15.9.0",
     "sass-embedded": "^1.80.3",
-    "vite": "^5.4.8",
+    "vite": "^7.3.1",
     "vite-plugin-static-copy": "^3.1.1"
   }
 }
