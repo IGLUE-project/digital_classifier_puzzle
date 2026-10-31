@@ -41,13 +41,13 @@ export default function ModalStart(props) {
                   <path d="M20.214 12.041l-1.212 1.213 2.213 2.216h-7a3.429 3.429 0 100 6.857h1.714v-1.714h-1.715a1.714 1.714 0 110-3.429h7l-2.213 2.218 1.213 1.21 4.286-4.285-4.286-4.286z"/>
                   <path d="M7.357 15.47H2.214L2.212 2.532l9.8 6.786a.857.857 0 00.976 0l9.798-6.782v7.791H24.5V1.756A1.716 1.716 0 0022.786.042H2.214A1.714 1.714 0 00.5 1.753V15.47a1.717 1.717 0 001.714 1.714h5.143V15.47zM20.9 1.756L12.5 7.57 4.1 1.756h16.8z"/>
                 </svg>
-                {appSettings.send}
+                {appSettings.sendText}
               </button>
             </div>
           </div>
         </div>
         <div className="continue">
-          <button onClick={props.closeModal}>{I18n.getTrans("i.continue")}</button>
+          <button onClick={props.closeModal}>{appSettings.continueButtonText}</button>
         </div>
 
         <div className="close_modal" onClick={props.closeModal}>

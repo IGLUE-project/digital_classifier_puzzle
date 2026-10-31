@@ -2,13 +2,26 @@
 
 export let ESCAPP_APP_SETTINGS = {
   //Settings that can be specified by the authors
-  skin: "STANDARD", //skin can be "STANDARD", "RETRO", or "FUTURISTIC".
   //background: "NONE", //background can be "NONE" or a URL.
-  actionAfterSolve: "SHOW_MESSAGE", //actionAfterSolve can be "NONE" or "SHOW_MESSAGE".
-  //message: "Custom message",
+  // button_ok: "Possible",
+  // button_nok: "Dismiss",
+  // sendText: "Check",
+  // continueButtonText: "Continue",
+  // send_disabled: "There are still items to classify",
+  // retry: "It seems I haven't classified all the items correctly",
+  // congrats: "Congratulations! You've correctly classified all the items.",
+  // header: "Resource classification",
+  // modalheader: "Resource classification",
+  // modalcontent: "There are several items to review and classify on this tablet. They will help you complete the task. Review each item and decide whether it meets the criteria.",
+  // modalinstructions0: "Instructions:",
+  // modalinstructions1: "1. For each item, click 'Dismiss' if it does not meet your criteria. Otherwise, click 'Possible'.",
+  // modalinstructions2: "2. Once you have classified ALL the items, click 'Check' to see if your classification is correct.",
+  // modalheader2: "Resource classification",
+  // feedback: "Comments:",
+  // end: "Challenge completed",
+  // review: "Review comments",
 
   //Settings that will be automatically specified by the Escapp server
-  solutionLength: 4,
   locale:"es",
   items: JSON.stringify([
     { "iframe":true,

@@ -55,13 +55,40 @@ export default function App() {
       _appSettings.skin = DEFAULT_APP_SETTINGS.skin;
     }
 
+    // Merge _appSettings with DEFAULT_APP_SETTINGS to obtain final app settings
+    _appSettings = Utils.deepMerge(DEFAULT_APP_SETTINGS, _appSettings);
 
     //Init internacionalization module
     I18n.init(_appSettings);
+
+    const translationKeys = [
+      "button_ok",
+      "button_nok",
+      "sendText",
+      "continueButtonText",
+      "send_disabled",
+      "retry",
+      "congrats",
+      "header",
+      "modalheader",
+      "modalcontent",
+      "modalinstructions0",
+      "modalinstructions1",
+      "modalinstructions2",
+      "modalheader2",
+      "feedback",
+      "end",
+      "review"
+    ];
+
+    translationKeys.forEach(key => {
+      if (typeof _appSettings[key] !== "string") {
+        _appSettings[key] = I18n.getTrans(`i.${key}`);
+      }
+    });
+
     setNews(JSON.parse(_appSettings.items || "[]"));
-    if(typeof _appSettings.message !== "string"){
-      _appSettings.message = I18n.getTrans("i.message");
-    }
+
 
     //Change HTTP protocol to HTTPs in URLs if necessary
     _appSettings = Utils.checkUrlProtocols(_appSettings);
@@ -253,7 +280,7 @@ export default function App() {
         solution += "0";
       }
     });
-    console.log("SOLUTION: " + solution);
+    Utils.log("SOLUTION: " + solution);
     escapp.submitNextPuzzle(solution, {}, function(success, erState){
       if(success){
         setPassed(true);
